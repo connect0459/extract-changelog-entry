@@ -18,6 +18,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      fixture: ${{ steps.filter.outputs.fixture }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        id: filter
+        with:
+          filters: |
+            fixture:
+              - '.github/workflows/ci.yml'
+              - 'tests/fixtures/**'
+              - 'action.yml'
+
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -28,6 +46,8 @@ jobs:
       - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
 
   fixture:
+    needs: changes
+    if: needs.changes.outputs.fixture == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -110,16 +130,24 @@ jobs:
   # matrix's own check names are per-leg (e.g. "fixture (standard)") and
   # shift whenever a fixture is added or removed; branch protection targets
   # this job instead, so its required-check list never needs to change.
+  # It also treats a skipped fixture matrix (no fixture-relevant files
+  # changed, per the `changes` job) as passing, not just a green one.
   # A future, differently-shaped test job joins the `needs:` list here
   # rather than becoming a second required check.
   test:
     if: always()
-    needs: fixture
+    needs: [changes, fixture]
     runs-on: ubuntu-latest
     steps:
-      - name: Require the fixture matrix to have succeeded
+      - name: Require the fixture matrix to have succeeded or been skipped
         run: |
-          if [ "${{ needs.fixture.result }}" != "success" ]; then
+          if [ "${{ needs.changes.result }}" != "success" ]; then
+            echo "::error::changed-files detection did not succeed"
+            exit 1
+          fi
+
+          FIXTURE_RESULT="${{ needs.fixture.result }}"
+          if [ "$FIXTURE_RESULT" != "success" ] && [ "$FIXTURE_RESULT" != "skipped" ]; then
             echo "::error::fixture matrix did not succeed"
             exit 1
           fi
