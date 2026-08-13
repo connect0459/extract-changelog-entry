@@ -1,4 +1,3 @@
-
 ## Added
 
 - New plugin API.
