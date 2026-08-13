@@ -30,7 +30,7 @@ This mirrors the CI pipeline (`.github/workflows/ci.yml`):
 | Command | Purpose |
 | :--- | :--- |
 | `pre-commit run --all-files` | Formatting, Markdown lint, `actionlint`, and `shellcheck` on `action.yml` |
-| `act -j tests` | Run the fixture matrix locally (requires Docker) |
+| `act -j fixture` | Run the fixture matrix locally (requires Docker) |
 
 There is no separate build step: `action.yml` is the shipped artifact.
 
@@ -78,7 +78,7 @@ across several repositories, so correctness is locked via
 
 1. Fork the repository and create a branch: `feat/xxx`, `fix/xxx`, `docs/xxx`.
 2. Add or update a fixture before changing `action.yml`; keep one concern per commit.
-3. Run `pre-commit run --all-files` and, if you have Docker, `act -j tests`; ensure both pass.
+3. Run `pre-commit run --all-files` and, if you have Docker, `act -j fixture`; ensure both pass.
 4. Open a pull request using the repository's PR template — CI (`ci.yml`'s fixture matrix) runs automatically.
 
 ## Code style

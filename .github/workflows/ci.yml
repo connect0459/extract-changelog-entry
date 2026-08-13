@@ -9,7 +9,24 @@ on:
 
 run-name: CI on ${{ github.head_ref || github.ref_name }}
 
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
+
   fixture:
     runs-on: ubuntu-latest
     strategy:
@@ -76,5 +93,23 @@ jobs:
           fi
           if [ "$ACTUAL_PATH" != "${{ runner.temp }}/release-notes.md" ]; then
             echo "::error::release-notes-path output mismatch: got '$ACTUAL_PATH'"
+            exit 1
+          fi
+
+  # A stable required-status-check name for branch protection. The fixture
+  # matrix's own check names are per-leg (e.g. "fixture (standard)") and
+  # shift whenever a fixture is added or removed; branch protection targets
+  # this job instead, so its required-check list never needs to change.
+  # A future, differently-shaped test job joins the `needs:` list here
+  # rather than becoming a second required check.
+  test:
+    if: always()
+    needs: fixture
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require the fixture matrix to have succeeded
+        run: |
+          if [ "${{ needs.fixture.result }}" != "success" ]; then
+            echo "::error::fixture matrix did not succeed"
             exit 1
           fi
