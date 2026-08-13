@@ -7,4 +7,4 @@
 
 ## Full Changelog
 
-[v1.0.0](https://github.com/connect0459/extract-changelog-release-notes/commits/v1.0.0)
+[v1.0.0](https://github.com/connect0459/extract-changelog/commits/v1.0.0)
