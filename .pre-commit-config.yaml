@@ -1,0 +1,39 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+        exclude: ^tests/fixtures/
+      - id: end-of-file-fixer
+        exclude: ^tests/fixtures/
+      - id: check-json
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.23.1
+    hooks:
+      - id: markdownlint-cli2
+        args: ["--fix"]
+        exclude: ^tests/fixtures/
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint
+
+  - repo: local
+    hooks:
+      - id: shellcheck-action
+        name: Shellcheck action.yml's embedded script
+        description: >-
+          actionlint only understands the jobs/on schema of workflow files,
+          not a composite action's runs.steps schema, so action.yml's run:
+          block is pulled out and shellchecked directly.
+        entry: >-
+          sh -c 'ruby -ryaml -e "$stdout.write(YAML.load_file(\"action.yml\").dig(\"runs\",\"steps\",0,\"run\"))" | shellcheck -s bash -'
+        language: system
+        files: ^action\.yml$
+        pass_filenames: false
