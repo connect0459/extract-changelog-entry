@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+run-name: CI on ${{ github.head_ref || github.ref_name }}
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        fixture:
+          - standard
+          - first-release
+          - trailing-blank-lines
+          - version-not-found
+          - no-reference-link
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Read fixture ref-name
+        id: fixture
+        run: echo "ref-name=$(cat "tests/fixtures/${{ matrix.fixture }}/ref-name")" >> "$GITHUB_OUTPUT"
+
+      - name: Run action against fixture
+        id: run-action
+        continue-on-error: true
+        uses: ./
+        with:
+          ref-name: ${{ steps.fixture.outputs.ref-name }}
+          changelog-path: tests/fixtures/${{ matrix.fixture }}/CHANGELOG.md
+          output-path: ${{ runner.temp }}/release-notes.md
+
+      - name: Verify outcome matches fixture contract
+        run: |
+          set -euo pipefail
+          FIXTURE_DIR="tests/fixtures/${{ matrix.fixture }}"
+          EXPECTED_FILE="$FIXTURE_DIR/expected.md"
+          OUTCOME="${{ steps.run-action.outcome }}"
+
+          # A fixture with an expected.md must succeed and produce matching
+          # output; a fixture without one documents an expected failure.
+          if [ -f "$EXPECTED_FILE" ]; then
+            if [ "$OUTCOME" != "success" ]; then
+              echo "::error::expected the action to succeed for fixture '${{ matrix.fixture }}', but it failed"
+              exit 1
+            fi
+            diff "$EXPECTED_FILE" "${{ runner.temp }}/release-notes.md"
+          else
+            if [ "$OUTCOME" == "success" ]; then
+              echo "::error::expected the action to fail for fixture '${{ matrix.fixture }}', but it succeeded"
+              exit 1
+            fi
+          fi
+
+      - name: Verify step outputs
+        if: steps.run-action.outcome == 'success'
+        run: |
+          set -euo pipefail
+          RAW_REF="${{ steps.fixture.outputs.ref-name }}"
+          EXPECTED_VERSION="${RAW_REF#v}"
+          ACTUAL_VERSION="${{ steps.run-action.outputs.version }}"
+          ACTUAL_PATH="${{ steps.run-action.outputs.release-notes-path }}"
+
+          if [ "$ACTUAL_VERSION" != "$EXPECTED_VERSION" ]; then
+            echo "::error::version output mismatch: expected '$EXPECTED_VERSION', got '$ACTUAL_VERSION'"
+            exit 1
+          fi
+          if [ "$ACTUAL_PATH" != "${{ runner.temp }}/release-notes.md" ]; then
+            echo "::error::release-notes-path output mismatch: got '$ACTUAL_PATH'"
+            exit 1
+          fi
