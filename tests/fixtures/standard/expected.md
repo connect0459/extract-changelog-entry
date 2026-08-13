@@ -1,4 +1,3 @@
-
 ## Added
 
 - Support for widget batching.

@@ -1,4 +1,3 @@
-
 ## Added
 
 - Initial public release.

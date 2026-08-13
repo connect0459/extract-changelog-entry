@@ -58,9 +58,16 @@ runs:
           capture { print }
         ' "$CHANGELOG_PATH" > "$OUTPUT_PATH"
 
-        # Drop trailing blank lines so appending the Full Changelog link
-        # below doesn't leave two blank lines before it.
-        awk '{a[NR]=$0} END {n=NR; while (n>0 && a[n] ~ /^[[:space:]]*$/) n--; for (i=1;i<=n;i++) print a[i]}' "$OUTPUT_PATH" > "$OUTPUT_PATH.tmp"
+        # Drop leading blank lines (the gap between the version heading and
+        # its first entry subsection) and trailing blank lines (so
+        # appending the Full Changelog link below doesn't leave two blank
+        # lines before it).
+        awk '{a[NR]=$0} END {
+          s=1; e=NR
+          while (s<=e && a[s] ~ /^[[:space:]]*$/) s++
+          while (e>=s && a[e] ~ /^[[:space:]]*$/) e--
+          for (i=s;i<=e;i++) print a[i]
+        }' "$OUTPUT_PATH" > "$OUTPUT_PATH.tmp"
         mv "$OUTPUT_PATH.tmp" "$OUTPUT_PATH"
 
         # Keep a Changelog nests each entry's subsections one level deeper
