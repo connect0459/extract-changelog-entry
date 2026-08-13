@@ -18,6 +18,13 @@ inputs:
     description: 'Path to write the extracted release notes to.'
     required: false
     default: 'release-notes.md'
+  promote-headings:
+    description: >-
+      Whether to promote entry subsection headings (###, ####, ...) by one
+      level so the output doesn't start at H3. Set to 'false' to keep the
+      CHANGELOG.md's original heading levels as-is.
+    required: false
+    default: 'true'
 
 outputs:
   release-notes-path:
@@ -36,6 +43,7 @@ runs:
         REF_NAME: ${{ inputs.ref-name }}
         CHANGELOG_PATH: ${{ inputs.changelog-path }}
         OUTPUT_PATH: ${{ inputs.output-path }}
+        PROMOTE_HEADINGS: ${{ inputs.promote-headings }}
       run: |
         set -euo pipefail
 
@@ -59,7 +67,9 @@ runs:
         # (###, ####, ...) than the version heading (##) this extraction
         # strips out. Promote every heading by one level so the release
         # body reads as a normal document instead of starting at H3.
-        sed -i -E 's/^#(#{2,}) /\1 /' "$OUTPUT_PATH"
+        if [ "$PROMOTE_HEADINGS" = "true" ]; then
+          sed -i -E 's/^#(#{2,}) /\1 /' "$OUTPUT_PATH"
+        fi
 
         if [ ! -s "$OUTPUT_PATH" ]; then
           echo "::error::No CHANGELOG.md section found for [$RELEASE_VERSION]. Retitle [Unreleased] to [$RELEASE_VERSION] - YYYY-MM-DD before tagging."
