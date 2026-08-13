@@ -28,14 +28,14 @@ separate script to slice it out) just gives the two a chance to drift.
 ## Usage
 
 ```yaml
-- name: Extract changelog section for this version
+- name: Extract changelog section
   id: changelog
   uses: connect0459/extract-changelog@v1
   with:
     ref-name: ${{ github.ref_name }}
 
 - name: Create GitHub Release
-  uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
+  uses: softprops/action-gh-release@v3
   with:
     name: ${{ github.ref_name }}
     body_path: ${{ steps.changelog.outputs.release-notes-path }}
