@@ -8,7 +8,7 @@ lint:
 
 # Run the fixture matrix locally via act (requires Docker)
 test:
-    act -j tests
+    act -j fixture
 
 # Verify code quality and behavior (matches CI; test requires Docker)
 verify: lint test
