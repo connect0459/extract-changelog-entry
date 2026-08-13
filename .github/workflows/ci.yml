@@ -10,7 +10,7 @@ on:
 run-name: CI on ${{ github.head_ref || github.ref_name }}
 
 jobs:
-  tests:
+  fixture:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
