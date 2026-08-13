@@ -3,8 +3,7 @@
 ## Prerequisites
 
 - [just](https://just.systems/) — task runner
-- [pre-commit](https://pre-commit.com/) — hook runner
-- [Ruby](https://www.ruby-lang.org/) and [ShellCheck](https://www.shellcheck.net/) — used by the local `shellcheck-action` pre-commit hook to lint `action.yml`'s embedded script (both ship by default on GitHub-hosted `ubuntu-latest` and macOS runners)
+- [pre-commit](https://pre-commit.com/) — hook runner (already requires a Python 3 interpreter to install; no separate Ruby/ShellCheck install is needed — the local `shellcheck-action` hook provisions PyYAML and ShellCheck via pre-commit's own Python-language environment)
 - [`act`](https://github.com/nektos/act) (optional) — runs `.github/workflows/ci.yml`'s fixture matrix locally instead of waiting on a push
 
 ## Setup

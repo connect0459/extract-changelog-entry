@@ -31,8 +31,8 @@ jobs:
         with:
           persist-credentials: false
 
-      # Ruby and ShellCheck ship by default on GitHub-hosted ubuntu-latest
-      # runners (used by the local shellcheck-action pre-commit hook); only
-      # pre-commit itself needs installing.
+      # The local shellcheck-action pre-commit hook provisions its own
+      # PyYAML + ShellCheck toolchain via pre-commit's Python-language
+      # environment; only pre-commit itself needs installing.
       - name: Install pre-commit
         run: pip install pre-commit
