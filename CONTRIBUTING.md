@@ -9,8 +9,8 @@
 ## Setup
 
 ```sh
-git clone https://github.com/connect0459/extract-changelog-release-notes
-cd extract-changelog-release-notes
+git clone https://github.com/connect0459/extract-changelog
+cd extract-changelog
 just setup
 ```
 

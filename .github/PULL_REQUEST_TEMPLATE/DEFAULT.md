@@ -5,9 +5,9 @@
 ## Related Links
 
 - Issues
-  - <!-- <https://github.com/connect0459/extract-changelog-release-notes/issues/xxx> -->
+  - <!-- <https://github.com/connect0459/extract-changelog/issues/xxx> -->
 - PRs
-  - <!-- <https://github.com/connect0459/extract-changelog-release-notes/pull/xxx> -->
+  - <!-- <https://github.com/connect0459/extract-changelog/pull/xxx> -->
 
 ## [Required] Overview
 

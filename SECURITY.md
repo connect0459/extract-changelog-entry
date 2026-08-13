@@ -21,7 +21,7 @@ expect an acknowledgement within 7 days and a status update within 30 days.
 - The version (tag or SHA) of this action in use.
 - A description of the impact.
 
-[private-report]: https://github.com/connect0459/extract-changelog-release-notes/security/advisories/new
+[private-report]: https://github.com/connect0459/extract-changelog/security/advisories/new
 
 ## Scope
 
