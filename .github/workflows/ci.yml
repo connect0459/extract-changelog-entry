@@ -38,14 +38,23 @@ jobs:
           - trailing-blank-lines
           - version-not-found
           - no-reference-link
+          - promote-headings-disabled
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
-      - name: Read fixture ref-name
+      - name: Read fixture inputs
         id: fixture
-        run: echo "ref-name=$(cat "tests/fixtures/${{ matrix.fixture }}/ref-name")" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "ref-name=$(cat "tests/fixtures/${{ matrix.fixture }}/ref-name")" >> "$GITHUB_OUTPUT"
+
+          PROMOTE_HEADINGS_FILE="tests/fixtures/${{ matrix.fixture }}/promote-headings"
+          if [ -f "$PROMOTE_HEADINGS_FILE" ]; then
+            echo "promote-headings=$(cat "$PROMOTE_HEADINGS_FILE")" >> "$GITHUB_OUTPUT"
+          else
+            echo "promote-headings=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Run action against fixture
         id: run-action
@@ -55,6 +64,7 @@ jobs:
           ref-name: ${{ steps.fixture.outputs.ref-name }}
           changelog-path: tests/fixtures/${{ matrix.fixture }}/CHANGELOG.md
           output-path: ${{ runner.temp }}/release-notes.md
+          promote-headings: ${{ steps.fixture.outputs.promote-headings }}
 
       - name: Verify outcome matches fixture contract
         run: |

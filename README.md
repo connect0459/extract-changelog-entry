@@ -31,6 +31,7 @@ Release itself is left to the caller's workflow.
 | `ref-name` | Yes | — | Git ref name of the release tag (e.g. `v1.2.3` or `1.2.3`). A leading `v` is stripped when matching the CHANGELOG.md version heading. |
 | `changelog-path` | No | `CHANGELOG.md` | Path to the CHANGELOG.md file. |
 | `output-path` | No | `release-notes.md` | Path to write the extracted release notes to. |
+| `promote-headings` | No | `true` | Whether to promote entry subsection headings (`###`, `####`, ...) by one level. Set to `false` to keep the CHANGELOG.md's original heading levels as-is. |
 
 ## Outputs
 
@@ -44,7 +45,8 @@ Release itself is left to the caller's workflow.
 - Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/): version
   sections are headed `## [X.Y.Z] - YYYY-MM-DD`, with entry subsections
   (`### Added`, `### Fixed`, etc.) nested one level deeper. These
-  subsections are promoted one heading level in the output.
+  subsections are promoted one heading level in the output by default; set
+  `promote-headings: false` to keep the original levels.
 - An `## [Unreleased]` section is expected above the latest version. If no
   section matching `ref-name` is found (for example, `[Unreleased]` was not
   retitled before tagging), the action fails with an error.
