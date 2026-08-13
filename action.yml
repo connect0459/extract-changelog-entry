@@ -1,0 +1,99 @@
+name: 'Extract Changelog Release Notes'
+description: >-
+  Extracts a single version's section from a Keep a Changelog CHANGELOG.md
+  file and appends a "Full Changelog" link, for use as GitHub Release notes.
+author: 'connect0459'
+
+inputs:
+  ref-name:
+    description: >-
+      Git ref name of the release tag (e.g. "v1.2.3" or "1.2.3"). A leading
+      "v" is stripped when matching the CHANGELOG.md version heading.
+    required: true
+  changelog-path:
+    description: 'Path to the CHANGELOG.md file.'
+    required: false
+    default: 'CHANGELOG.md'
+  output-path:
+    description: 'Path to write the extracted release notes to.'
+    required: false
+    default: 'release-notes.md'
+
+outputs:
+  release-notes-path:
+    description: 'Path to the generated release notes file (same as output-path).'
+    value: ${{ steps.extract.outputs.release-notes-path }}
+  version:
+    description: 'The release version with any leading "v" stripped.'
+    value: ${{ steps.extract.outputs.version }}
+
+runs:
+  using: 'composite'
+  steps:
+    - id: extract
+      shell: bash
+      env:
+        REF_NAME: ${{ inputs.ref-name }}
+        CHANGELOG_PATH: ${{ inputs.changelog-path }}
+        OUTPUT_PATH: ${{ inputs.output-path }}
+      run: |
+        set -euo pipefail
+
+        RELEASE_VERSION="${REF_NAME#v}"
+
+        awk -v ver="$RELEASE_VERSION" '
+          /^## \[/ {
+            if (capture) exit
+            if (index($0, "## [" ver "]") == 1) { capture = 1; next }
+          }
+          /^---/ { if (capture) exit }
+          capture { print }
+        ' "$CHANGELOG_PATH" > "$OUTPUT_PATH"
+
+        # Drop trailing blank lines so appending the Full Changelog link
+        # below doesn't leave two blank lines before it.
+        awk '{a[NR]=$0} END {n=NR; while (n>0 && a[n] ~ /^[[:space:]]*$/) n--; for (i=1;i<=n;i++) print a[i]}' "$OUTPUT_PATH" > "$OUTPUT_PATH.tmp"
+        mv "$OUTPUT_PATH.tmp" "$OUTPUT_PATH"
+
+        # Keep a Changelog nests each entry's subsections one level deeper
+        # (###, ####, ...) than the version heading (##) this extraction
+        # strips out. Promote every heading by one level so the release
+        # body reads as a normal document instead of starting at H3.
+        sed -i -E 's/^#(#{2,}) /\1 /' "$OUTPUT_PATH"
+
+        if [ ! -s "$OUTPUT_PATH" ]; then
+          echo "::error::No CHANGELOG.md section found for [$RELEASE_VERSION]. Retitle [Unreleased] to [$RELEASE_VERSION] - YYYY-MM-DD before tagging."
+          exit 1
+        fi
+
+        # Append a Full Changelog section, reusing the compare URL that
+        # CHANGELOG.md's own reference-link section already records for
+        # this version. The very first release's reference link points at
+        # the tag itself rather than a compare view, so link the tag name
+        # to its commit history instead.
+        COMPARE_URL="$(awk -v ver="$RELEASE_VERSION" '
+          index($0, "[" ver "]: ") == 1 {
+            sub(/^\[[^]]*\]: </, "")
+            sub(/>$/, "")
+            print
+            exit
+          }
+        ' "$CHANGELOG_PATH")"
+
+        FULL_CHANGELOG_LABEL=""
+        FULL_CHANGELOG_URL=""
+        if [[ "$COMPARE_URL" == *"/compare/"* ]]; then
+          FULL_CHANGELOG_LABEL="${COMPARE_URL##*/}"
+          FULL_CHANGELOG_URL="$COMPARE_URL"
+        elif [ -n "$COMPARE_URL" ]; then
+          FULL_CHANGELOG_LABEL="$REF_NAME"
+          FULL_CHANGELOG_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commits/$REF_NAME"
+        fi
+
+        if [ -n "$FULL_CHANGELOG_URL" ]; then
+          printf '\n---\n\n## Full Changelog\n\n[%s](%s)\n' \
+            "$FULL_CHANGELOG_LABEL" "$FULL_CHANGELOG_URL" >> "$OUTPUT_PATH"
+        fi
+
+        echo "release-notes-path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
+        echo "version=$RELEASE_VERSION" >> "$GITHUB_OUTPUT"
