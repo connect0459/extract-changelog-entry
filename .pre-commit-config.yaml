@@ -33,7 +33,8 @@ repos:
           not a composite action's runs.steps schema, so action.yml's run:
           block is pulled out and shellchecked directly.
         entry: >-
-          sh -c 'ruby -ryaml -e "$stdout.write(YAML.load_file(\"action.yml\").dig(\"runs\",\"steps\",0,\"run\"))" | shellcheck -s bash -'
-        language: system
+          sh -c 'python3 -c "import sys, yaml; sys.stdout.write(yaml.safe_load(open(\"action.yml\"))[\"runs\"][\"steps\"][0][\"run\"])" | shellcheck -s bash -'
+        language: python
+        additional_dependencies: [pyyaml, shellcheck-py]
         files: ^action\.yml$
         pass_filenames: false
