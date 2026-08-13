@@ -1,7 +1,7 @@
 # extract-changelog
 
 A composite GitHub Action that extracts a single version's section from a
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/)-formatted
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) -formatted
 `CHANGELOG.md` and appends a "Full Changelog" link, producing a file
 suitable for `softprops/action-gh-release`'s `body_path` input.
 
