@@ -1,24 +1,41 @@
 # extract-changelog
 
 A composite GitHub Action that extracts a single version's section from a
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/)-formatted
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) -formatted
 `CHANGELOG.md` and appends a "Full Changelog" link, producing a file
 suitable for `softprops/action-gh-release`'s `body_path` input.
 
 This action only extracts the release notes text. Creating the GitHub
 Release itself is left to the caller's workflow.
 
+## Motivation
+
+A changelog entry and a release's notes are the same text wearing two
+hats: the entry gets written and reviewed at PR time, well before any
+tag exists, and by release time it already says everything the release
+notes need to. Hand-copying it into the release (or maintaining a
+separate script to slice it out) just gives the two a chance to drift.
+
+- **Release notes for free.** The changelog entry already written for
+  the version is reused as-is — no second draft to author for the
+  GitHub Release.
+- **No drift.** There's exactly one place a version's notes live, so the
+  changelog and the release can't end up saying different things.
+- **Fits into an existing release workflow.** Chain it ahead of
+  `softprops/action-gh-release` (see [Usage](#usage) below) and a tag
+  push produces both the changelog entry and the release, unattended.
+
 ## Usage
 
 ```yaml
-- name: Extract changelog section for this version
+- name: Extract changelog section
   id: changelog
   uses: connect0459/extract-changelog@v1
   with:
     ref-name: ${{ github.ref_name }}
 
 - name: Create GitHub Release
-  uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
+  uses: softprops/action-gh-release@v3
   with:
     name: ${{ github.ref_name }}
     body_path: ${{ steps.changelog.outputs.release-notes-path }}
@@ -61,9 +78,14 @@ Release itself is left to the caller's workflow.
   falls back to the tag's commit history. If no reference link exists for
   the version, no "Full Changelog" section is appended.
 
-## Testing
+See [`tests/fixtures/standard`](tests/fixtures/standard) for a worked
+example: a `CHANGELOG.md` and `ref-name` input paired with the
+`release-notes.md` this action produces from them.
 
-`.github/workflows/ci.yml` runs the action against the fixtures under
-[`tests/fixtures/`](tests/fixtures), each pairing a `CHANGELOG.md` and
-`ref-name` with either an `expected.md` (the action must succeed and match)
-or no `expected.md` (the action must fail).
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+[MIT](LICENSE)
