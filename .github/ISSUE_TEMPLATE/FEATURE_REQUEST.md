@@ -6,7 +6,7 @@ about: Request a new feature or enhancement
 ## Related Links
 
 - Issues
-  - <!-- <https://github.com/connect0459/extract-changelog-release-notes/issues/xxx> -->
+  - <!-- <https://github.com/connect0459/extract-changelog/issues/xxx> -->
 - Other references
   - <!-- <https://example.com/ref-1> -->
 

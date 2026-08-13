@@ -1,4 +1,4 @@
-name: 'Extract Changelog Release Notes'
+name: 'Extract Changelog'
 description: >-
   Extracts a single version's section from a Keep a Changelog CHANGELOG.md
   file and appends a "Full Changelog" link, for use as GitHub Release notes.

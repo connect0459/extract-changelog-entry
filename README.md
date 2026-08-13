@@ -1,4 +1,4 @@
-# extract-changelog-release-notes
+# extract-changelog
 
 A composite GitHub Action that extracts a single version's section from a
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)-formatted
@@ -13,7 +13,7 @@ Release itself is left to the caller's workflow.
 ```yaml
 - name: Extract changelog section for this version
   id: changelog
-  uses: connect0459/extract-changelog-release-notes@v1
+  uses: connect0459/extract-changelog@v1
   with:
     ref-name: ${{ github.ref_name }}
 
