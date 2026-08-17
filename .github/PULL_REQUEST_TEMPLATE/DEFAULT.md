@@ -31,8 +31,7 @@ It is difficult to review without knowing the specifications and background.
 - [ ] Breaking changes (describe below)
 
 <!--
-If this changes action.yml's inputs/outputs (README.md's Inputs/Outputs
-tables), describe what breaks and why the breakage is justified.
+If this changes action.yml's inputs/outputs (README.md's Inputs/Outputs tables), describe what breaks and why the breakage is justified.
 -->
 
 ## Deferred Items and TODOs

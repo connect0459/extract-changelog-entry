@@ -35,23 +35,12 @@ There is no separate build step: `action.yml` is the shipped artifact.
 
 ## Testing guidelines
 
-This project has no domain code to unit test — `action.yml`'s extraction
-logic was ported verbatim from production workflows already running
-across several repositories, so correctness is locked via
-**characterization tests**, not derived from a spec:
+This project has no domain code to unit test — `action.yml`'s extraction logic was ported verbatim from production workflows already running across several repositories, so correctness is locked via **characterization tests**, not derived from a spec:
 
-- Each fixture under `tests/fixtures/<case>/` pairs a `CHANGELOG.md` and a
-  `ref-name` file with either an `expected.md` (the action must succeed
-  and its output must match byte-for-byte) or no `expected.md` (the
-  action must fail).
-- Add a new fixture directory for each new edge case rather than
-  branching an existing one — one scenario per fixture keeps `diff`
-  output attributable to a single behavior change.
-- Never hand-derive an `expected.md`. Run the action against the fixture
-  and review the actual output before committing it as the expectation;
-  see `AGENTS.md` for why.
-- `.github/workflows/ci.yml` runs every fixture through the actual
-  composite action (`uses: ./`) — nothing here is mocked.
+- Each fixture under `tests/fixtures/<case>/` pairs a `CHANGELOG.md` and a `ref-name` file with either an `expected.md` (the action must succeed and its output must match byte-for-byte) or no `expected.md` (the action must fail).
+- Add a new fixture directory for each new edge case rather than branching an existing one — one scenario per fixture keeps `diff` output attributable to a single behavior change.
+- Never hand-derive an `expected.md`. Run the action against the fixture and review the actual output before committing it as the expectation; see `AGENTS.md` for why.
+- `.github/workflows/ci.yml` runs every fixture through the actual composite action (`uses: ./`) — nothing here is mocked.
 
 ## Commit format
 

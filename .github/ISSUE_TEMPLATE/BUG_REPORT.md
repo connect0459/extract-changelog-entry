@@ -13,9 +13,7 @@ about: Report a bug
 
 ## [Required] Minimal Reproduction
 
-Ideally shaped like a `tests/fixtures/<case>/` fixture: a minimal
-`CHANGELOG.md` plus the `with:` inputs (`ref-name`, `changelog-path`,
-`output-path`) that trigger the issue.
+Ideally shaped like a `tests/fixtures/<case>/` fixture: a minimal `CHANGELOG.md` plus the `with:` inputs (`ref-name`, `changelog-path`, `output-path`) that trigger the issue.
 
 ```yaml
 # CHANGELOG.md
