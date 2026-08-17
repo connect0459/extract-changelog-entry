@@ -1,8 +1,6 @@
 # AGENTS.md / CLAUDE.md
 
-This is a GitHub composite Action, written as `action.yml` plus embedded
-bash (`awk`/`sed`). There is no application code, domain layer, or
-compiled artifact — the shipped behavior is the YAML file itself.
+This is a GitHub composite Action, written as `action.yml` plus embedded bash (`awk`/`sed`). There is no application code, domain layer, or compiled artifact — the shipped behavior is the YAML file itself.
 
 ## Language Convention
 
@@ -16,40 +14,21 @@ This project may be released publicly. All of the following must be written in *
 
 ## Before Starting Development
 
-Before making changes, read `CONTRIBUTING.md` and run `just --list` to learn
-the commands this project uses for setup, linting, and testing. Use those
-commands rather than reaching for ad-hoc equivalents.
+Before making changes, read `CONTRIBUTING.md` and run `just --list` to learn the commands this project uses for setup, linting, and testing. Use those commands rather than reaching for ad-hoc equivalents.
 
 ## Development Philosophy
 
 ### Fixture-based Characterization Testing
 
-- `action.yml`'s extraction logic was ported verbatim from production
-  workflows already running across multiple repositories; it is proven
-  behavior, not a new design. Correctness is therefore locked via
-  characterization tests rather than derived from a spec: each fixture
-  under `tests/fixtures/<case>/` pairs a `CHANGELOG.md` and `ref-name`
-  input with either an `expected.md` (the action must succeed and match
-  byte-for-byte) or no `expected.md` (the action must fail).
-- Write the fixture (input + expected outcome) before changing
-  `action.yml`; run `.github/workflows/ci.yml`'s fixture matrix after, to
-  confirm the change is deliberate rather than an accidental regression.
-- The only real external boundary is the filesystem (`CHANGELOG.md`,
-  `output-path`); tests exercise the actual composite action end-to-end
-  (`uses: ./`) against real files — nothing here is mocked.
-- Never hand-derive an `expected.md` from reading the `awk`/`sed` script.
-  Run the action against the fixture and review the actual output; save
-  that as the fixture's expectation. A hand-transcribed expectation risks
-  encoding the same transcription error the test was meant to catch.
+- `action.yml`'s extraction logic was ported verbatim from production workflows already running across multiple repositories; it is proven behavior, not a new design. Correctness is therefore locked via characterization tests rather than derived from a spec: each fixture under `tests/fixtures/<case>/` pairs a `CHANGELOG.md` and `ref-name` input with either an `expected.md` (the action must succeed and match byte-for-byte) or no `expected.md` (the action must fail).
+- Write the fixture (input + expected outcome) before changing `action.yml`; run `.github/workflows/ci.yml`'s fixture matrix after, to confirm the change is deliberate rather than an accidental regression.
+- The only real external boundary is the filesystem (`CHANGELOG.md`, `output-path`); tests exercise the actual composite action end-to-end (`uses: ./`) against real files — nothing here is mocked.
+- Never hand-derive an `expected.md` from reading the `awk`/`sed` script. Run the action against the fixture and review the actual output; save that as the fixture's expectation. A hand-transcribed expectation risks encoding the same transcription error the test was meant to catch.
 
 ### Fixture Naming
 
-- A fixture's directory name describes the CHANGELOG.md **scenario** being
-  exercised (e.g. `first-release`, `no-reference-link`), not the
-  `awk`/`sed` mechanism that handles it.
-- A new edge case gets a new fixture directory, not a branch inside an
-  existing one — one scenario per fixture keeps `diff` output attributable
-  to a single behavior change.
+- A fixture's directory name describes the CHANGELOG.md **scenario** being exercised (e.g. `first-release`, `no-reference-link`), not the `awk`/`sed` mechanism that handles it.
+- A new edge case gets a new fixture directory, not a branch inside an existing one — one scenario per fixture keeps `diff` output attributable to a single behavior change.
 
 ### Code Comments
 
@@ -86,8 +65,7 @@ commands rather than reaching for ad-hoc equivalents.
 
 ### Scopes
 
-Scope is optional for this single-action repository; omit it for most
-changes. Use `fixtures` when a change is confined to `tests/fixtures/`.
+Scope is optional for this single-action repository; omit it for most changes. Use `fixtures` when a change is confined to `tests/fixtures/`.
 
 ### Type vs. Scope Precedence
 
