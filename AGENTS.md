@@ -65,8 +65,7 @@ Before making changes, read `CONTRIBUTING.md` and run `just --list` to learn the
 
 ### Scopes
 
-Scope is optional for this single-action repository; omit it for most
-changes. Use `fixtures` when a change is confined to `tests/fixtures/`.
+Scope is optional for this single-action repository; omit it for most changes. Use `fixtures` when a change is confined to `tests/fixtures/`.
 
 ### Type vs. Scope Precedence
 
