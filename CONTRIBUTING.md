@@ -58,7 +58,7 @@ This project has no domain code to unit test — `action.yml`'s extraction logic
 
 **Subject**: imperative mood ("add", "fix", "remove"), 72 characters max, no trailing period.
 
-**Body** (optional): wrap at 72 characters; explain **why**, not what — the diff already shows what changed.
+**Body** (optional): explain **why**, not what — the diff already shows what changed.
 
 **Footer** (optional): `BREAKING CHANGE: <description>`, or `Closes #123` / `Fixes #456` to link issues.
 
