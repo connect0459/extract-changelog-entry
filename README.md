@@ -1,5 +1,8 @@
 # extract-changelog
 
+[![CI](https://github.com/connect0459/extract-changelog/actions/workflows/ci.yml/badge.svg)](https://github.com/connect0459/extract-changelog/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/connect0459/extract-changelog/blob/main/LICENSE)
+
 A composite GitHub Action that extracts a single version's section from a [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) -formatted `CHANGELOG.md` and appends a "Full Changelog" link, producing a file suitable for `softprops/action-gh-release`'s `body_path` input.
 
 This action only extracts the release notes text. Creating the GitHub Release itself is left to the caller's workflow.
