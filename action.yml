@@ -4,6 +4,10 @@ description: >-
   file and appends a "Full Changelog" link, for use as GitHub Release notes.
 author: 'connect0459'
 
+branding:
+  icon: 'file-text'
+  color: 'white'
+
 inputs:
   ref-name:
     description: >-
