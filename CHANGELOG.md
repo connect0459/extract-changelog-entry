@@ -16,7 +16,7 @@ When cutting a new release, update THREE places in this file:
 
    Pushing the tag triggers `.github/workflows/release.yml`, which extracts this file's `[X.Y.Z]` section and creates the GitHub Release from it automatically. Do not run `gh release create` manually; it would create the tag/Release ahead of the workflow with hand-pasted notes instead of the CHANGELOG-derived ones.
 
-This project is itself consumed as a GitHub Action (`uses: connect0459/extract-changelog@vMAJOR`), so also re-point the movable major tag at the new commit (or create it, for a new major version):
+This project is itself consumed as a GitHub Action (`uses: connect0459/extract-changelog-entry@vMAJOR`), so also re-point the movable major tag at the new commit (or create it, for a new major version):
 
     ```console
     git tag -f vMAJOR vX.Y.Z && git push origin vMAJOR --force
@@ -42,5 +42,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
-[Unreleased]: <https://github.com/connect0459/extract-changelog/compare/v1.0.0...HEAD>
-[1.0.0]: <https://github.com/connect0459/extract-changelog/releases/tag/v1.0.0>
+[Unreleased]: <https://github.com/connect0459/extract-changelog-entry/compare/v1.0.0...HEAD>
+[1.0.0]: <https://github.com/connect0459/extract-changelog-entry/releases/tag/v1.0.0>
