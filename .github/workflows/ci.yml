@@ -132,17 +132,22 @@ jobs:
   # this job instead, so its required-check list never needs to change.
   # It also treats a skipped fixture matrix (no fixture-relevant files
   # changed, per the `changes` job) as passing, not just a green one.
-  # A future, differently-shaped test job joins the `needs:` list here
-  # rather than becoming a second required check.
-  test:
+  # A future, differently-shaped job joins the `needs:` list here rather
+  # than becoming a second required check.
+  gate:
     if: always()
-    needs: [changes, fixture]
+    needs: [changes, lint, fixture]
     runs-on: ubuntu-latest
     steps:
-      - name: Require the fixture matrix to have succeeded or been skipped
+      - name: Require lint and the fixture matrix to have succeeded
         run: |
           if [ "${{ needs.changes.result }}" != "success" ]; then
             echo "::error::changed-files detection did not succeed"
+            exit 1
+          fi
+
+          if [ "${{ needs.lint.result }}" != "success" ]; then
+            echo "::error::lint did not succeed"
             exit 1
           fi
 
