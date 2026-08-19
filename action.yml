@@ -1,7 +1,7 @@
 name: 'Extract Changelog Entry'
 description: >-
-  Extracts a single version's section from a Keep a Changelog CHANGELOG.md
-  file and appends a "Full Changelog" link, for use as GitHub Release notes.
+  Extracts a version's section from a Keep a Changelog file and appends a
+  Full Changelog link for GitHub Release notes.
 author: 'connect0459'
 
 branding:
