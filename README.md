@@ -1,7 +1,7 @@
-# extract-changelog
+# extract-changelog-entry
 
-[![CI](https://github.com/connect0459/extract-changelog/actions/workflows/ci.yml/badge.svg)](https://github.com/connect0459/extract-changelog/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/connect0459/extract-changelog/blob/main/LICENSE)
+[![CI](https://github.com/connect0459/extract-changelog-entry/actions/workflows/ci.yml/badge.svg)](https://github.com/connect0459/extract-changelog-entry/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/connect0459/extract-changelog-entry/blob/main/LICENSE)
 
 A composite GitHub Action that extracts a single version's section from a [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) -formatted `CHANGELOG.md` and appends a "Full Changelog" link, producing a file suitable for `softprops/action-gh-release`'s `body_path` input.
 
@@ -20,7 +20,7 @@ A changelog entry and a release's notes are the same text wearing two hats: the 
 ```yaml
 - name: Extract changelog section
   id: changelog
-  uses: connect0459/extract-changelog@v1
+  uses: connect0459/extract-changelog-entry@v1
   with:
     ref-name: ${{ github.ref_name }}
 

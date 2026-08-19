@@ -16,7 +16,7 @@ Use GitHub's [private vulnerability reporting][private-report] feature, or email
 - The version (tag or SHA) of this action in use.
 - A description of the impact.
 
-[private-report]: https://github.com/connect0459/extract-changelog/security/advisories/new
+[private-report]: https://github.com/connect0459/extract-changelog-entry/security/advisories/new
 
 ## Scope
 
