@@ -59,8 +59,8 @@ See [`tests/fixtures/standard`](tests/fixtures/standard) for a worked example: a
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](https://github.com/connect0459/extract-changelog-entry/blob/main/CONTRIBUTING.md).
 
 ## License
 
-[MIT](LICENSE)
+[MIT](https://github.com/connect0459/extract-changelog-entry/blob/main/LICENSE)
