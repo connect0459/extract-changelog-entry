@@ -144,9 +144,15 @@ runs:
               t = stripindent(s)
               return (substr(t, len + 1) ~ /^[ \t]*$/)
             }
-            function heading_hashes(s,   n) {
+            function indent_len(s,   n) {
               n = 0
-              while (substr(s, n + 1, 1) == "#") n++
+              while (n < 3 && substr(s, n + 1, 1) == " ") n++
+              return n
+            }
+            function heading_hashes(s,   t, n) {
+              t = stripindent(s)
+              n = 0
+              while (substr(t, n + 1, 1) == "#") n++
               return n
             }
             {
@@ -164,8 +170,9 @@ runs:
                 next
               }
               n = heading_hashes($0)
-              if (n > 0 && substr($0, n + 1, 1) == " ") {
+              if (n > 0 && substr(stripindent($0), n + 1, 1) == " ") {
                 heading_level[NR] = n
+                heading_indent[NR] = indent_len($0)
                 if (min_level == 0 || n < min_level) min_level = n
               }
             }
@@ -177,9 +184,12 @@ runs:
                 if (heading_level[i] > 0) {
                   new_level = heading_level[i] - delta
                   if (new_level < 1) new_level = 1
+                  indent = ""
+                  for (j = 0; j < heading_indent[i]; j++) indent = indent " "
                   hashes = ""
                   for (j = 0; j < new_level; j++) hashes = hashes "#"
-                  sub(/^#+/, hashes, line)
+                  rest = substr(line, heading_indent[i] + heading_level[i] + 1)
+                  line = indent hashes rest
                 }
                 print line
               }
