@@ -53,13 +53,50 @@ runs:
 
         RELEASE_VERSION="${REF_NAME#v}"
 
+        # A "## [" heading or "---" divider inside a fenced code block is
+        # literal text, not a real boundary; skip boundary checks while
+        # inside a fence. An unclosed fence swallows the rest of the file.
         awk -v ver="$RELEASE_VERSION" '
-          /^## \[/ {
-            if (capture) exit
-            if (index($0, "## [" ver "]") == 1) { capture = 1; next }
+          function stripindent(s,   n) {
+            n = 0
+            while (n < 3 && substr(s, n + 1, 1) == " ") n++
+            return substr(s, n + 1)
           }
-          /^---/ { if (capture) exit }
-          capture { print }
+          function fence_len(s,   t, ch, n) {
+            t = stripindent(s)
+            ch = substr(t, 1, 1)
+            if (ch != "`" && ch != "~") return 0
+            n = 0
+            while (substr(t, n + 1, 1) == ch) n++
+            if (n < 3) return 0
+            return n
+          }
+          function fence_char(s,   t) {
+            t = stripindent(s)
+            return substr(t, 1, 1)
+          }
+          function fence_rest_blank(s, len,   t) {
+            t = stripindent(s)
+            return (substr(t, len + 1) ~ /^[ \t]*$/)
+          }
+          {
+            len = fence_len($0)
+            if (in_fence) {
+              if (len >= fence_min_len && fence_char($0) == fence_ch && fence_rest_blank($0, len)) {
+                in_fence = 0
+              }
+            } else if (len > 0) {
+              in_fence = 1
+              fence_ch = fence_char($0)
+              fence_min_len = len
+            } else if ($0 ~ /^## \[/) {
+              if (capture) exit
+              if (index($0, "## [" ver "]") == 1) { capture = 1; next }
+            } else if ($0 ~ /^---/) {
+              if (capture) exit
+            }
+            if (capture) print
+          }
         ' "$CHANGELOG_PATH" > "$OUTPUT_PATH"
 
         # Drop leading blank lines (the gap between the version heading and
@@ -79,7 +116,56 @@ runs:
         # strips out. Promote every heading by one level so the release
         # body reads as a normal document instead of starting at H3.
         if [ "$PROMOTE_HEADINGS" = "true" ]; then
-          sed -i -E 's/^#(#{2,}) /\1 /' "$OUTPUT_PATH"
+          awk '
+            function stripindent(s,   n) {
+              n = 0
+              while (n < 3 && substr(s, n + 1, 1) == " ") n++
+              return substr(s, n + 1)
+            }
+            function fence_len(s,   t, ch, n) {
+              t = stripindent(s)
+              ch = substr(t, 1, 1)
+              if (ch != "`" && ch != "~") return 0
+              n = 0
+              while (substr(t, n + 1, 1) == ch) n++
+              if (n < 3) return 0
+              return n
+            }
+            function fence_char(s,   t) {
+              t = stripindent(s)
+              return substr(t, 1, 1)
+            }
+            function fence_rest_blank(s, len,   t) {
+              t = stripindent(s)
+              return (substr(t, len + 1) ~ /^[ \t]*$/)
+            }
+            function heading_hashes(s,   n) {
+              n = 0
+              while (substr(s, n + 1, 1) == "#") n++
+              return n
+            }
+            {
+              len = fence_len($0)
+              if (in_fence) {
+                if (len >= fence_min_len && fence_char($0) == fence_ch && fence_rest_blank($0, len)) {
+                  in_fence = 0
+                }
+                print
+                next
+              } else if (len > 0) {
+                in_fence = 1
+                fence_ch = fence_char($0)
+                fence_min_len = len
+                print
+                next
+              }
+              line = $0
+              n = heading_hashes(line)
+              if (n >= 3 && substr(line, n + 1, 1) == " ") sub(/^#/, "", line)
+              print line
+            }
+          ' "$OUTPUT_PATH" > "$OUTPUT_PATH.tmp"
+          mv "$OUTPUT_PATH.tmp" "$OUTPUT_PATH"
         fi
 
         if [ ! -s "$OUTPUT_PATH" ]; then
