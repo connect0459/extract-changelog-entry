@@ -24,9 +24,10 @@ inputs:
     default: 'release-notes.md'
   promote-headings:
     description: >-
-      Whether to promote entry subsection headings (###, ####, ...) by one
-      level so the output doesn't start at H3. Set to 'false' to keep the
-      CHANGELOG.md's original heading levels as-is.
+      Whether to promote entry headings so the shallowest one present
+      becomes an H2, preserving every other heading's depth relative to it.
+      Set to 'false' to keep the CHANGELOG.md's original heading levels
+      as-is.
     required: false
     default: 'true'
 
@@ -113,8 +114,12 @@ runs:
 
         # Keep a Changelog nests each entry's subsections one level deeper
         # (###, ####, ...) than the version heading (##) this extraction
-        # strips out. Promote every heading by one level so the release
-        # body reads as a normal document instead of starting at H3.
+        # strips out. An entry body can also embed its own headings shallower
+        # than that convention (e.g. a "##" inside a list item's continuation
+        # text); shifting every heading by a fixed +1 would flatten those
+        # relative to the subsections. Instead, find the shallowest heading
+        # actually present in the body and shift every heading by the delta
+        # that normalizes it to "##", preserving relative depth throughout.
         if [ "$PROMOTE_HEADINGS" = "true" ]; then
           awk '
             function stripindent(s,   n) {
@@ -145,24 +150,39 @@ runs:
               return n
             }
             {
+              lines[NR] = $0
               len = fence_len($0)
               if (in_fence) {
                 if (len >= fence_min_len && fence_char($0) == fence_ch && fence_rest_blank($0, len)) {
                   in_fence = 0
                 }
-                print
                 next
               } else if (len > 0) {
                 in_fence = 1
                 fence_ch = fence_char($0)
                 fence_min_len = len
-                print
                 next
               }
-              line = $0
-              n = heading_hashes(line)
-              if (n >= 3 && substr(line, n + 1, 1) == " ") sub(/^#/, "", line)
-              print line
+              n = heading_hashes($0)
+              if (n > 0 && substr($0, n + 1, 1) == " ") {
+                heading_level[NR] = n
+                if (min_level == 0 || n < min_level) min_level = n
+              }
+            }
+            END {
+              delta = 0
+              if (min_level > 0) delta = min_level - 2
+              for (i = 1; i <= NR; i++) {
+                line = lines[i]
+                if (heading_level[i] > 0) {
+                  new_level = heading_level[i] - delta
+                  if (new_level < 1) new_level = 1
+                  hashes = ""
+                  for (j = 0; j < new_level; j++) hashes = hashes "#"
+                  sub(/^#+/, hashes, line)
+                }
+                print line
+              }
             }
           ' "$OUTPUT_PATH" > "$OUTPUT_PATH.tmp"
           mv "$OUTPUT_PATH.tmp" "$OUTPUT_PATH"
