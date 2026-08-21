@@ -39,7 +39,7 @@ A changelog entry and a release's notes are the same text wearing two hats: the 
 | `ref-name` | Yes | — | Git ref name of the release tag (e.g. `v1.2.3` or `1.2.3`). A leading `v` is stripped when matching the CHANGELOG.md version heading. |
 | `changelog-path` | No | `CHANGELOG.md` | Path to the CHANGELOG.md file. |
 | `output-path` | No | `release-notes.md` | Path to write the extracted release notes to. |
-| `promote-headings` | No | `true` | Whether to promote entry subsection headings (`###`, `####`, ...) by one level. Set to `false` to keep the CHANGELOG.md's original heading levels as-is. |
+| `promote-headings` | No | `true` | Whether to promote entry headings so the shallowest one present becomes an H2, preserving every other heading's depth relative to it. Set to `false` to keep the CHANGELOG.md's original heading levels as-is. |
 
 ## Outputs
 
@@ -50,7 +50,7 @@ A changelog entry and a release's notes are the same text wearing two hats: the 
 
 ## CHANGELOG.md format requirements
 
-- Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/): version sections are headed `## [X.Y.Z] - YYYY-MM-DD`, with entry subsections (`### Added`, `### Fixed`, etc.) nested one level deeper. These subsections are promoted one heading level in the output by default; set `promote-headings: false` to keep the original levels.
+- Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/): version sections are headed `## [X.Y.Z] - YYYY-MM-DD`, with entry subsections (`### Added`, `### Fixed`, etc.) nested one level deeper. By default, headings in the output are promoted so the shallowest one found in the entry body becomes `##`, with every other heading shifted by the same amount to preserve its depth relative to that one; set `promote-headings: false` to keep the original levels. If an entry body itself contains a heading as shallow as or shallower than its KaC subsection heading, the subsection heading is left at its original level rather than promoted, since it is no longer the shallowest heading present.
 - An `## [Unreleased]` section is expected above the latest version. If no section matching `ref-name` is found (for example, `[Unreleased]` was not retitled before tagging), the action fails with an error.
 - A version's section ends at the next `## [` heading, or at a `---` horizontal rule (used ahead of the reference-link block at the end of the file — this is how the oldest version's section is terminated, since there is no earlier heading to stop at).
 - A fenced code block (` ``` ` or `~~~`) inside an entry is treated as literal content: `#`-prefixed lines, `## [` headings, and `---` dividers inside it are never promoted or treated as a section boundary. Fence recognition follows CommonMark's document-root indentation limit (up to 3 leading spaces); a fence indented further than that — for example inside a nested list item — is not recognized, and its content is not protected.
