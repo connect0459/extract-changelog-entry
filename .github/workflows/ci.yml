@@ -63,6 +63,7 @@ jobs:
           - deep-heading-promotion
           - nested-section-headings
           - top-level-heading-in-entry-body
+          - heading-shift-exceeds-h6
           - code-fence-boundary-marker
           - unclosed-code-fence
     steps:

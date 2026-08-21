@@ -184,6 +184,9 @@ runs:
                 if (heading_level[i] > 0) {
                   new_level = heading_level[i] - delta
                   if (new_level < 1) new_level = 1
+                  # A 7th "#" is not an ATX heading per CommonMark/GitHub;
+                  # cap the shift rather than emit an invalid heading.
+                  if (new_level > 6) new_level = 6
                   indent = ""
                   for (j = 0; j < heading_indent[i]; j++) indent = indent " "
                   hashes = ""
