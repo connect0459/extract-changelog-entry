@@ -62,6 +62,7 @@ jobs:
           - promote-headings-code-fence
           - deep-heading-promotion
           - nested-section-headings
+          - top-level-heading-in-entry-body
           - code-fence-boundary-marker
           - unclosed-code-fence
     steps:

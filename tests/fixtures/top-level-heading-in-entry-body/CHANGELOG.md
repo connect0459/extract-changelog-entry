@@ -11,13 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New reporting module. Structure:
+- Body text.
 
-  ## section-1
+# top
 
-  ### overview
-
-  ## section-2
+- Initial public release.
 
 ---
 

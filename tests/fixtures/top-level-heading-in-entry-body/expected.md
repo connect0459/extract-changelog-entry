@@ -1,12 +1,10 @@
-### Added
+#### Added
 
-- New reporting module. Structure:
+- Body text.
 
-  ## section-1
+## top
 
-  ### overview
-
-  ## section-2
+- Initial public release.
 
 ---
 
