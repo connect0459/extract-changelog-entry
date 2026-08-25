@@ -213,7 +213,8 @@ runs:
         # to its commit history instead.
         COMPARE_URL="$(awk -v ver="$RELEASE_VERSION" '
           index($0, "[" ver "]: ") == 1 {
-            sub(/^\[[^]]*\]: </, "")
+            sub(/^\[[^]]*\]: /, "")
+            sub(/^</, "")
             sub(/>$/, "")
             print
             exit
