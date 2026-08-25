@@ -29,6 +29,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-25
+
+### Changed
+
+- Renamed the project and action from `extract-changelog` to `extract-changelog-entry`; update `uses: connect0459/extract-changelog-entry@vMAJOR` references accordingly (existing `extract-changelog` references keep working via GitHub's repository redirect).
+- Added GitHub Marketplace branding (`file-text` icon, white background) and a shortened Marketplace listing description.
+
+### Fixed
+
+- `promote-headings` now preserves an entry's relative heading depth instead of shifting every heading by a fixed one level, so a heading embedded in an entry body no longer collides with a promoted subsection heading; promoted headings are capped at H6.
+- Heading promotion and section-boundary detection are now fence-aware, so a `#`-prefixed line, or a `## [`/`---` boundary marker, inside a fenced code block is no longer mistaken for a real heading or extraction boundary.
+- Fenced code blocks and headings indented 4 or more spaces (e.g. inside a nested list item, or a double-digit ordered list item) are now recognized instead of being silently truncated or left unpromoted.
+- The "Full Changelog" link now resolves correctly when a `CHANGELOG.md` reference-style link omits angle brackets (`[X.Y.Z]: url` instead of `[X.Y.Z]: <url>`), matching Keep a Changelog's own template.
+
 ## [1.0.0] - 2026-08-13
 
 ### Added
@@ -42,5 +56,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
-[Unreleased]: <https://github.com/connect0459/extract-changelog-entry/compare/v1.0.0...HEAD>
+[Unreleased]: <https://github.com/connect0459/extract-changelog-entry/compare/v1.1.0...HEAD>
+[1.1.0]: <https://github.com/connect0459/extract-changelog-entry/compare/v1.0.0...v1.1.0>
 [1.0.0]: <https://github.com/connect0459/extract-changelog-entry/releases/tag/v1.0.0>
