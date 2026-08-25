@@ -70,6 +70,8 @@ jobs:
           - ten-item-ordered-list-code-fence
           - two-level-nested-list-heading-promotion
           - ten-item-ordered-list-heading-promotion
+          - bare-url-reference-link
+          - bare-url-tag-reference-link
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
