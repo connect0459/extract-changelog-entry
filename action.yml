@@ -124,7 +124,7 @@ runs:
           awk '
             function stripindent(s,   n) {
               n = 0
-              while (n < 3 && substr(s, n + 1, 1) == " ") n++
+              while (substr(s, n + 1, 1) == " ") n++
               return substr(s, n + 1)
             }
             function fence_len(s,   t, ch, n) {
@@ -146,7 +146,7 @@ runs:
             }
             function indent_len(s,   n) {
               n = 0
-              while (n < 3 && substr(s, n + 1, 1) == " ") n++
+              while (substr(s, n + 1, 1) == " ") n++
               return n
             }
             function heading_hashes(s,   t, n) {
