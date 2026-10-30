@@ -16,6 +16,7 @@ repos:
     rev: v0.23.2
     hooks:
       - id: markdownlint-cli2
+        language_version: lts
         args: ["--fix"]
         exclude: ^tests/fixtures/
 
@@ -23,6 +24,7 @@ repos:
     rev: v1.7.12
     hooks:
       - id: actionlint
+        language_version: 1.26.5
 
   - repo: local
     hooks:
@@ -35,6 +37,7 @@ repos:
         entry: >-
           sh -c 'python3 -c "import sys, yaml; sys.stdout.write(yaml.safe_load(open(\"action.yml\"))[\"runs\"][\"steps\"][0][\"run\"])" | shellcheck -s bash -'
         language: python
+        language_version: python3
         additional_dependencies: [pyyaml, shellcheck-py]
         files: ^action\.yml$
         pass_filenames: false
